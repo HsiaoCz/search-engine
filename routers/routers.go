@@ -1,26 +1,19 @@
 package routers
 
 import (
-	"github.com/HsiaoCz/search-engine/views"
-	"github.com/a-h/templ"
+	"github.com/HsiaoCz/search-engine/handlers"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/adaptor"
 )
 
-func render(c *fiber.Ctx, component templ.Component, options ...func(*templ.ComponentHandler)) error {
-	componentHandler := templ.Handler(component)
-	for _, o := range options {
-		o(componentHandler)
-	}
-	return adaptor.HTTPHandler(componentHandler)(c)
-}
-
 func SetRouters(app *fiber.App) {
-	app.Get("/", func(c *fiber.Ctx) error {
-		return render(c, views.Home())
-	})
+	var (
+		pageHandler = handlers.NewPageHandler()
+		userHandelr = handlers.NewUserHandlers()
+	)
+	// page handlers
+	app.Get("/", pageHandler.HandleHome)
+	app.Get("/login", pageHandler.HandleLogin)
 
-	app.Get("/login", func(c *fiber.Ctx) error {
-		return render(c, views.Login())
-	})
+	// user handlers
+	app.Post("/login", userHandelr.HandleUserLogin)
 }
