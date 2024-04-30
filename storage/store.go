@@ -1,5 +1,5 @@
 package storage
 
-type Store struct{
-
+type Store struct {
+	User UserStorer
 }

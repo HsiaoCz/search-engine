@@ -4,15 +4,19 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/HsiaoCz/search-engine/storage"
 	"github.com/HsiaoCz/search-engine/types"
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandlers struct {
+	store *storage.Store
 }
 
-func NewUserHandlers() *UserHandlers {
-	return &UserHandlers{}
+func NewUserHandlers(store *storage.Store) *UserHandlers {
+	return &UserHandlers{
+		store: store,
+	}
 }
 
 func (u *UserHandlers) HandleUserLogin(c *fiber.Ctx) error {
