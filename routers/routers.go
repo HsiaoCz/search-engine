@@ -12,7 +12,7 @@ func SetRouters(app *fiber.App) {
 	)
 	// page handlers
 	app.Get("/", pageHandler.HandleHome)
-	app.Get("/login", pageHandler.HandleLogin)
+	app.Post("/", pageHandler.HandleCrash)
 
 	// user handlers
 	app.Post("/login", userHandelr.HandleUserLogin)
