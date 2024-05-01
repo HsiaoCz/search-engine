@@ -33,3 +33,11 @@ func GetUserColl(key string) string {
 	}
 	return userColl
 }
+
+func GetSecretKey(key string) string {
+	serectKey := os.Getenv(key)
+	if serectKey == "" {
+		return "HelloKitty"
+	}
+	return serectKey
+}
