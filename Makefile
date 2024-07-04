@@ -7,3 +7,8 @@ gen:
 mod:
 	@go mod tidy
 
+mongo:
+	@docker start mongo 
+
+run:
+	@go run main.go

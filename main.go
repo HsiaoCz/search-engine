@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/HsiaoCz/search-engine/conf"
 	"github.com/HsiaoCz/search-engine/routers"
 	"github.com/HsiaoCz/search-engine/storage"
 	"github.com/gofiber/fiber/v2"
@@ -17,26 +16,34 @@ import (
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		slog.Error("load the env error", "err", err)
-		return
+		log.Fatal(err)
 	}
 
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(conf.GetMongoUrl("DATABASE_URL")))
+	ctx := context.Background()
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("DATABASE_URL")))
 	if err != nil {
-		slog.Error("connect mongo db error", "err", err)
-		return
+		log.Fatal(err)
 	}
+
+	go func() {
+		if err := client.Ping(ctx, &readpref.ReadPref{}); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	var (
-		port      = conf.GetPort("PORT")
-		dbname    = conf.GetMongoDBName("DBNAME")
-		userColl  = conf.GetUserColl("USERCOLL")
-		userStore = storage.NewMongoUserStore(client, dbname, userColl)
-		store     = &storage.Store{User: userStore}
+		port         = os.Getenv("PORT")
+		dbname       = os.Getenv("DBNAME")
+		userCollName = os.Getenv("USERCOLL")
+		userColl     = client.Database(dbname).Collection(userCollName)
+		userStore    = storage.NewMongoUserStore(client, userColl)
+		store        = &storage.Store{User: userStore}
 	)
 
 	app := fiber.New(fiber.Config{

@@ -2,9 +2,9 @@ package utils
 
 import (
 	"errors"
+	"os"
 	"time"
 
-	"github.com/HsiaoCz/search-engine/conf"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -28,7 +28,7 @@ func CreateNewAuthToken(id string, email string, isAdmin bool) (string, error) {
 
 	// create token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, cliams)
-	secretKey := conf.GetSecretKey("SECRET_KEY")
+	secretKey := os.Getenv("SECRET_KEY")
 
 	signedToken, err := token.SignedString([]byte(secretKey))
 	if err != nil {
